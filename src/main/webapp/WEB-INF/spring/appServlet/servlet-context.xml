@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<!-- 
+	resources폴더에 대한 설정부분이다. 주로 이미지나 css, js와 같은 
+	설정파일들을 저장하기 위해 사용되며 실제경로는 
+	"컨텍스트루트/src/webapp/resources" 이다. views하위 폴더에서 
+	접근할때는 아래 매핑된 정보와 같이 ./resources/파일명 형태로 작성한다.
+	-->
+	<resources mapping="/resources/**" location="/resources/" />
+	<!-- resources 폴더의 매핑정보 common 을 추가함. 
+	views폴더 하위에서 "./common/파일명" 으로 접근가능함. -->
+	<resources mapping="/common/**" location="/resources/" />
+
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<!-- 
+	ViewResolver 설정부분
+	경로를 아래와 같이 조립후....
+	[prefix]               				[suffix]
+	"/WEB-INF/views/"+ controller반환값 +".jsp"
+	웹브라우저 화면에 관련 내용을 출력. 
+	controller는 views를 호출하기전 출력할 내용을 model에 저장하게 된다.
+	-->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<!-- 
+	SpringMVC로 요청이 들어오면 제일먼저 DispatcherServlet이 요청을
+	받는다. 그리고 아래 설정된 기본 패키지를 검색(Scan)후 @Controller
+	어노테이션이 붙어있는 클래스를 컨트롤러로 인식하고 요청명에 해당하는
+	메소드를 찾아서 실행한다.
+	 -->
+	<context:component-scan base-package="com.kosmo.springEx" />
+	<!-- Spring게시판을 위한 컨트롤러 위치 설정 -->
+	<context:component-scan base-package="springBoard.controller" />
+	
+	<!-- Spring JDBC를 사용하기 위해 빈을 생성하는 부분 -->
+	<beans:bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<beans:property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+		<beans:property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl"/>
+		<beans:property name="username" value="kosmo"/>
+		<beans:property name="password" value="1234"/>
+	</beans:bean>
+
+	<beans:bean name="template" class="org.springframework.jdbc.core.JdbcTemplate">
+		<beans:property name="dataSource" ref="dataSource"></beans:property>
+	</beans:bean>
+	
+	<!-- Mybatis 방명록 제작 1차버전(JdbcTemplate사용)에서 주입받을 빈 생성 -->
+	<beans:bean name="MyDao" class="mybatis.MyBoardDAO">
+		<beans:property name="template" ref="template"></beans:property>
+	</beans:bean>
+	
+	<!-- Mybatis 방명록 제작 2차버전(Mybatis사용)에서 주입받을 빈 생성 -->
+	<beans:bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<beans:property name="dataSource" ref="dataSource"/>
+		<beans:property name="mapperLocations" value="classpath:mybatis/mapper/*.xml"/>
+	</beans:bean>
+	<beans:bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<beans:constructor-arg index="0" ref="sqlSessionFactory"/>
+	</beans:bean>
+	
+	
+	<!-- 트랜젝션1 > 트랜젝션 처리전 구매하기 -->
+	<!-- 
+	<beans:bean name="TransactionDao" class="transaction.TicketDAO">
+		<beans:property name="template" ref="template" />
+	</beans:bean>
+	 -->
+	
+	<!-- 트랜젝션2 > 트랜젝션 처리후 구매하기 -->
+	<!-- 
+	<beans:bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<beans:property name="dataSource" ref="dataSource"/>
+	</beans:bean>
+	<beans:bean name="TransactionDAO" class="transaction.TicketDAO">
+		<beans:property name="template" ref="template"/>
+		<beans:property name="tranMgr" ref="transactionManager"/>
+	</beans:bean>
+	 -->
+	<!--  -->
+	<!-- 트랜젝션3 > 트랜젝션 템플릿 사용하기 -->
+	<beans:bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<beans:property name="dataSource" ref="dataSource"/>
+	</beans:bean>
+	
+	<beans:bean name="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+		<beans:property name="transactionManager" ref="transactionManager"/>
+	</beans:bean>
+	<beans:bean name="TransactionDAO" class="transaction.TicketTplDAO">
+		<beans:property name="template" ref="template"/>
+		<beans:property name="transactionTemplate" ref="transactionTemplate"/>
+	</beans:bean>
+	
+	<!-- 클래스가 프레임워크 플랫폼 클래스라면 프로퍼티 네임은 그 플랫폼 클래스 안에서 지정한 이름으로 써야하고
+		클래스를 직접 만든거라면 직접 정의한 이름으로 쓰면 된다.
+	 -->
+</beans:beans>

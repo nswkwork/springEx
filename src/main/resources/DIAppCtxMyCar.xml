@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 스포츠카 클래스를 이용한 빈 생성 -->
+	<!-- <bean id="car" class="di.SportsCar"></bean> -->
+	
+	<!-- 하이브리드카 -->
+	<bean id="car" class="di.HybridCar"></bean>
+	
+	<!-- 오픈카 -->
+	<!-- <bean id="car" class="di.OpenCar"></bean> -->
+	
+</beans>

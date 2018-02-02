@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!--
+	XML설정파일에서 빈을 생성하고 있다. 
+	클래스명은 반드시 package명까지 full네임을 써줘야 한다.
+	빈을 생성하는 부분을 java코드로 표현하면 아래와 같다.	
+	 
+	import di.Calculator;
+	Calculator calculation = new Calculator(); 
+	-->
+	<bean id="calculation" class="di.Calculator" />
+	
+	<!-- 
+	import di.CalculatorDTO;
+	CalculatorDTO myCal = new CalculatorDTO();
+	myCal.setCal(calculation);
+	myCal.setFirstNum(100);
+	myCal.setSecondNum(200);	
+	-->
+	<bean id="myCal" class="di.CalculatorDTO">
+		<!-- 위에서 생성한 calculation빈을 참조하여 멤버변수를
+		초기화 하고 있다.  -->
+		<property name="cal">
+			<ref bean="calculation" />
+		</property>		
+		<property name="firstNum" value="200"></property>
+		<property name="secondNum" value="100" />
+	</bean>
+
+</beans>

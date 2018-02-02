@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- BMI지수 빈 설정 : setter를 통해 값 설정됨 -->
+	<bean id="bmiCalResult" class="di.BMICalResult">
+		<property name="lowWeight"><!-- 저체중지수 -->
+			<value>18.5</value>
+		</property>
+		<property name="normal"><!-- 정상체중지수 -->
+			<value>23</value>
+		</property>
+		<property name="overWeight"><!-- 과체중지수 -->
+			<value>25</value>
+		</property>
+		<property name="obesity"><!-- 비만지수 -->
+			<value>30</value>
+		</property>		
+	</bean>
+
+	<!-- BMI결과 출력을 위한 빈 생성 -->
+	<bean id="myInfo" class="di.BMIInfoView">
+		<property name="name" value="홍길동"></property><!-- 이름 -->
+		<property name="height" value="182"></property><!-- 신장 -->
+		<property name="weight" value="77" /><!-- 몸무게 -->
+		<property name="hobbys"><!-- 취미(ArrayList) -->
+			<list>
+				<value>자전거</value>
+				<value>퀵보드</value>
+				<value>레고</value>
+			</list>
+		</property>
+		<!-- 위에서 생성한 bean을 참조하여 초기화 -->
+		<property name="bmiCalResult">
+			<ref bean="bmiCalResult" />
+		</property>
+	</bean>
+</beans>
+

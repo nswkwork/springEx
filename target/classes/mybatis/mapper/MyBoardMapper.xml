@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mybatis.MyBoardDAOImpl">
+	
+	<select id="list" resultType="mybatis.MyBoardDTO">
+		SELECT*FROM myboard ORDER BY idx DESC
+	</select>
+	
+	<insert id="write">
+		<!-- INSERT INTO myboard (idx, name, contents, id) VALUES (myboard_seq.nextval, #{param1}, #{param2}, #{param3}) -->
+		INSERT INTO myboard (idx, name, contents, id) VALUES (myboard_seq.nextval, #{_name}, #{_contents}, #{_id})
+	</insert>
+	
+	
+	<delete id="delete">
+		DELETE FROM myboard WHERE idx=#{param1} AND id=#{param2}
+	</delete>
+	
+	<select id="view" resultType="mybatis.MyBoardDTO">
+		SELECT*FROM myboard WHERE idx=#{param1} AND id=#{param2}
+	</select>
+	
+	<update id="modify">
+		UPDATE myboard SET name=#{param1}, contents=#{param2} WHERE idx=#{param3} AND id=#{param4}
+	</update>
+
+	<select id="login" resultType="mybatis.MemberDTO">
+		SELECT*FROM member WHERE id=#{param1} AND pass=#{param2}
+	</select>
+</mapper>
+
