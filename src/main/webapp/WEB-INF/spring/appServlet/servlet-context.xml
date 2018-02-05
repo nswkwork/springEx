@@ -110,4 +110,9 @@
 	<!-- 클래스가 프레임워크 플랫폼 클래스라면 프로퍼티 네임은 그 플랫폼 클래스 안에서 지정한 이름으로 써야하고
 		클래스를 직접 만든거라면 직접 정의한 이름으로 쓰면 된다.
 	 -->
+	 
+	<!-- MultipartResolver 설정 -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="10000000"/> <!-- 10메가 -->
+	</beans:bean>
 </beans:beans>

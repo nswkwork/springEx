@@ -202,7 +202,13 @@
 	</li>
 	
 	
-	
+	<h2>파일업로드</h2>
+	<li>
+		<a href="./fileUpload/uploadForm.do" target="_blank">파일업로드폼</a>
+	</li>
+	<li>
+		<a href="./fileUpload/uploadPath.do" target="_blank">물리적 경로 보기</a>
+	</li>	
 	
 	
 	
